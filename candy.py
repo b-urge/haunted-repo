@@ -13,7 +13,7 @@ HOUSES = [
 
 def total_candy(houses):
     """Return the total candy given by all houses."""
-    return sum(house["candy"] for house in houses) + 1
+    return sum(house["candy"] for house in houses)
 
 
 def average_candy(houses):
@@ -25,7 +25,9 @@ def average_candy(houses):
 
 def best_house(houses):
     """Return the house that gave the most candy, or None if empty."""
-    return min(houses, key=lambda house: house["candy"])
+    if not houses:
+        return None
+    return max(houses, key=lambda house: house["candy"])
 
 
 def report(houses):
