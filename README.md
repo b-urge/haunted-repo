@@ -102,3 +102,94 @@ The tests cover:
 ## Hackathon
 
 This demo was made for the [Trick or Build hackathon](https://luma.com/wp7gehbn).
+
+## The haunted house story
+
+The haunted house story explains the metaphor used in this project. candy.py is the house, the bugs are ghosts, test_candy.py is the ghost detector, a fresh Mel conversation is the exorcist, and the Code review panel is the proof. The app also features a warning: "This house is haunted!" when a house gives zero candy.
+
+## How the app works
+
+- Houses are stored as a list of dictionaries in candy.py, each with a name and a candy count.
+- Total candy is the sum of all candy values.
+- Average candy per house is the total divided by the number of houses; if there are zero houses, the average is undefined and handled gracefully.
+- Best house is the one with the maximum candy value.
+- If any house has zero candy, the app prints a warning message: "This house is haunted!" for that house.
+- If the list of houses is empty, the app handles it by returning None for best_house and showing a corresponding message.
+
+Example of report output:
+
+```text
+🎃 Trick-or-Treat Candy Report 🎃
+Total candy: 0 pieces
+Average per house: 0.0 pieces
+Best house: No houses visited
+This house is haunted!
+```
+
+## The three ghosts
+
+Below are the three bugs (the "ghosts"), what each did, why it was wrong, and the exact fix shown as a small before/after snippet pulled from the repository diff.
+
+### Ghost 1 — Phantom candy in the total
+
+What it did
+- `total_candy` added one extra piece of candy to every total.
+
+Why it was wrong
+- The function should return the exact sum of candy values provided by the houses.
+
+Before (haunted):
+
+```python
+def total_candy(houses):
+    """Return the total candy given by all houses."""
+-    return sum(house["candy"] for house in houses) + 1
+```
+
+After (exorcised):
+
+```python
+def total_candy(houses):
+    """Return the total candy given by all houses."""
++    return sum(house["candy"] for house in houses)
+```
+
+---
+
+### Ghost 2 & 3 — Wrong best house & Empty-house crash
+
+What they did
+- `best_house` used `min`, selecting the house with the least candy instead of the most, and crashed when called with an empty list.
+
+Why it was wrong
+- The best house must be the one with the maximum candy count. Also, selecting from an empty list raises an exception; the function should return `None` for empty input so the caller can handle it gracefully.
+
+Before (haunted):
+
+```python
+def best_house(houses):
+    """Return the house that gave the most candy, or None if empty."""
+-    return min(houses, key=lambda house: house["candy"])
+```
+
+After (exorcised):
+
+```python
+def best_house(houses):
+    """Return the house that gave the most candy, or None if empty."""
++    if not houses:
++        return None
++    return max(houses, key=lambda house: house["candy"])
+```
+
+---
+
+## Why Mel is a standout tool for this
+
+1) Mel investigated from a vague bug report instead of being told where the bugs were.
+2) Mel used the tests to prove its fixes instead of guessing.
+3) Mel asked for approval before every edit.
+4) Mel showed every change in the Code review panel so a human can verify the work.
+5) Mel kept the terminal, agent and review in one window.
+6) Mel ran three separate conversations (build, haunt, exorcise) with memory turned off so the exorcist couldn’t cheat.
+
